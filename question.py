@@ -134,7 +134,7 @@ def close_current_question():
 
     users = []
     for user in answered:
-        logging.info(f'Answered users: {user}')
+        logging.info(f'Answered user: {user}')
         users.append(user)
 
     archive = db.archive

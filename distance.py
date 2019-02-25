@@ -1,7 +1,7 @@
 def someones_distance(a, b):
     """"
     Calculates the Levenshtein distance between a and b.
-    Taken from internet.
+    Taken from the Internet.
     """
     n, m = len(a), len(b)
     if n > m:
@@ -38,49 +38,35 @@ def calc_distance(fw, sw):
 
         if len(sw) > len(fw):
             fw.extend([1] * (len(sw) - len(fw)))  # extending shorter word to a length of
-                                                # a longer one to avoid index error
+                                                  # a longer one to avoid index error
         if cnt == len(sw):
             return distance
 
-        elif cnt == len(sw) - 1: # last letter
-            if fw[cnt] == sw[cnt]: #  MATCH
-                print(f'{fw[cnt]} == {sw[cnt]}')
+        elif cnt == len(sw) - 1:  # last letter
+            if fw[cnt] == sw[cnt]:  # MATCH
                 return recursive_calc(fw, sw, distance, cnt + 1)
-            else: # REPLACE
-                print(f'Replaced {fw[cnt]} with {sw[cnt]}')
+            else:  # REPLACE
                 fw[cnt] = sw[cnt]
-                print(''.join(str(i) for i in fw))
                 return recursive_calc(fw, sw, distance+1, cnt+1)
 
         else:
-            if fw[cnt] == sw[cnt]: #  MATCH
-                print(f'{fw[cnt]} == {sw[cnt]}')
-                return recursive_calc(fw,sw,distance,cnt+1)
+            if fw[cnt] == sw[cnt]:  # MATCH
+                return recursive_calc(fw, sw, distance, cnt+1)
             elif fw[cnt] == sw[cnt+1]:
                 if fw[cnt+1] == sw[cnt]:  # TRANSPOSITION
-                    print(f'Swapped {fw[cnt]} and {fw[cnt+1]}')
                     fw[cnt], fw[cnt+1] = fw[cnt+1], fw[cnt]
-                    print(''.join(str(i) for i in fw))
-                    return recursive_calc(fw,sw,distance+1,cnt+1)
-                else: # INSERT
-                    print(f'Inserted {sw[cnt]} before {fw[cnt]}')
+                    return recursive_calc(fw, sw, distance+1, cnt+1)
+                else:  # INSERT
                     fw.insert(cnt, sw[cnt])
-                    print(''.join(str(i) for i in fw))
                     return recursive_calc(fw, sw, distance+1, cnt+1)
             elif fw[cnt+1] == sw[cnt]:
-                print(f'Deleted {fw[cnt]}')
                 del fw[cnt]
-                print(''.join(str(i) for i in fw))
                 return recursive_calc(fw, sw, distance+1, cnt+1)
-            else: # REPLACE
-                print(f'Replaced {fw[cnt]} with {sw[cnt]}')
+            else:  # REPLACE
                 fw[cnt] = sw[cnt]
-                print(''.join(str(i) for i in fw))
                 return recursive_calc(fw, sw, distance+1, cnt+1)
 
-    a = recursive_calc(fw, sw)
-    print(a)
-    return a
+    return recursive_calc(fw, sw)
 
 
 

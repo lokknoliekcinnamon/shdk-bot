@@ -14,10 +14,21 @@ to the question, as well as other contextual information.
 
 ### Commands Available To Admin
 
+* /notify_members 
+* /print_all_questions
+* /close_current_question
+* /check_archive
+* /change_question
+* /delete_question
+* /reset_users_dbs
+* /delete_all_questions 
+
 
 ### Commands Available To User 
+* /start :) 
+* /get_question
 
-
+No help in this doomed place. Answer or wait desperately for the answer. 
 
 #### Saving the Questions  
 
@@ -39,9 +50,6 @@ named 'questions'.
 After a successful saving a confirming message is sent to a dialog with 
 an admin.
 
-Saving is available when an admin **is not** in a state of answering, 
-otherwise any message of theirs is considered being an answer to a current 
-question.
 
 #### Checking Saved Questions 
 
@@ -61,7 +69,6 @@ a right answer.
 
 ###### B
 * tips
-* 
 
 ###### C
 * pics
@@ -93,3 +100,5 @@ mongo does all the work itself
  > 22.02.2019 
  > * new command added: /change_question (changing by _id)
  > * added a decorator for checking privileges 
+ 
+ Next changes will be reviewed in commits. 

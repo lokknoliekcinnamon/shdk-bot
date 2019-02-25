@@ -16,8 +16,16 @@ bot = telebot.TeleBot(config.BOT_CONFIG['TOKEN'])
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    users.save_user(message)
-    bot.reply_to(message, "Здаров.")
+    """
+    When a user sends the /start command a bot saves him to a full db of users,
+    then sends a greeting with buttons to get a question or get nothing :)
+    """
+    saved_user = users.save_user(message)
+    warning = ''
+    if not saved_user['username']:
+        warning = 'Настоятельно рекомендую завести юзернейм. Пожалуйста.'
+
+    bot.send_message(message.chat.id, f"Даров, {saved_user['first_name']}. "+warning)
     logging.info(f'Пользователь {message.chat.id} - {message.chat.first_name} присоединился.')
 
     button_names = ['Получить вопрос', '???']
@@ -27,8 +35,8 @@ def send_welcome(message):
 
 @bot.message_handler(commands=['get_question'])
 def get_question(message):
+    users.save_user(message)  # TODO: убрать по наполнению базы. Костыль для лохов.
     current_question = qa.CurrentQuestion()
-    users.save_user(message)
 
     if current_question.question:
         bot.send_message(message.chat.id,
@@ -43,7 +51,7 @@ def get_question(message):
         bot.send_message(message.chat.id, "Есть два стула.", reply_markup=create_keyboard(button_names, callbacks))
 
 
-@bot.message_handler(commands=['reset_dbs'])
+@bot.message_handler(commands=['reset_users_dbs'])
 @check_access
 def reset_dbs(message):
     users.reset_dbs()

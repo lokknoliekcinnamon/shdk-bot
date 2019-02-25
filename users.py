@@ -4,18 +4,22 @@ import logging
 
 def save_user(message):
     """
-    Fills a collection of all users subscribed (id & username).
+    Fills a collection of all users subscribed (id, username, first name).
     """
     uid = message.chat.id
     username = message.chat.username
+    first_name = message.chat.first_name
 
     all_users = db.all_users
     user_data = {
         'uid': uid,
         'username': username,
+        'first_name': first_name
     }
     result = all_users.update_one({'uid': uid}, {'$setOnInsert': user_data}, upsert=True)
     logging.info(f'{username} started answering.')
+
+    return user_data
 
 
 def add_answering_person(message):
