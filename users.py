@@ -54,7 +54,10 @@ def move_to_answered(chat):
 def get_all_users_ids():
     result = []
     for document in db.all_users.find():
-        result.append(document["uid"])
+        result.append({
+            'uid': document['uid'],
+            'username': document['username']
+        })
     return result
 
 

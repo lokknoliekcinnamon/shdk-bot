@@ -79,19 +79,25 @@ def close_current_question(message):
     answer = current_question.answer
     comment = current_question.comment or ''
 
-    all_ids = users.get_answered_persons_ids() + users.get_answering_persons_ids() + [config.BOT_CONFIG['ADMIN_ID']]
+    question_user_list = users.get_answered_persons_ids() + users.get_answering_persons_ids() + [config.BOT_CONFIG['ADMIN_ID']]
     qa.close_current_question()
     users.reset_dbs()
 
-    for uid in all_ids:
-        bot.send_message(uid, f'Ответили: {answered}')
-        bot.send_message(uid, f'Ответ: {answer} \n' + comment)
+    for uid in question_user_list:
+        try:
+            bot.send_message(uid, f'Ответили: {answered}')
+            bot.send_message(uid, f'Ответ: {answer} \n' + comment)
+        except Exception as e:
+            logging.info(f'Oops. {uid}, {e}.')
 
     button_names = ['Получить вопрос', 'Послать ответившим <3']
     callbacks = ['get_question', 'send_love_to_winners']
 
-    for id in users.get_all_users_ids():
-        bot.send_message(id, "Новый вопрос подъехал.", reply_markup=create_keyboard(button_names, callbacks))
+    for uid in users.get_all_users_ids():
+        try:
+            bot.send_message(id, "Новый вопрос подъехал.", reply_markup=create_keyboard(button_names, callbacks))
+        except Exception as e:
+            logging.info(f'Oops. {uid}, {e}.')
 
 
 @bot.message_handler(commands=['check_archive'])
@@ -122,11 +128,14 @@ def delete_question(message):
 @bot.message_handler(commands=['notify_members'])
 @check_access
 def notify_all(message):
-    if message.chat.id == config.BOT_CONFIG['ADMIN_ID']:
-        text = message.text.replace('/notify_members ', '')
-        uids = users.get_all_users_ids()
-        for uid in uids:
-            bot.send_message(uid, text)
+    text = message.text.replace('/notify_members ', '')
+    user_list = users.get_all_users_ids()
+    for user in user_list:
+        try:
+            bot.send_message(user['uid'], text)
+            logging.info(f'{text} was sent to {user["uid"]}')
+        except Exception as e:
+            logging.info(f'Oops. {user["uid"]}, {user["username"]}, {e}.')
 
 
 @bot.message_handler(commands=['change_question'])
@@ -134,9 +143,9 @@ def notify_all(message):
 def change_question(message):
     """
     takes input in a following format:
-    /change_question <_id> <type> "text"
+    /change_question <_id> <type> text
     E.g.:
-    /change_question 5c6ac5fe450b92ac3bebb308 answer "Random text to be inserted instead of previous one."
+    /change_question 5c6ac5fe450b92ac3bebb308 answer Random text to be inserted instead of previous one.
     """
     text = message.text.replace('/change_question ', '')
 
@@ -184,7 +193,7 @@ def handle_message(message):
             bot.send_message(message.chat.id, 'Это не вопрос :(')
 
     elif message.chat.id:
-        logging.info(f'Caught {message.chat.id} with { message.text }')
+        logging.info(f'Caught {message.chat.id, message.chat.username} with { message.text }')
 
 
 @bot.callback_query_handler(func=lambda call: True)
