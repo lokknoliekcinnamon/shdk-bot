@@ -178,7 +178,10 @@ def handle_message(message):
             bot.send_message(message.chat.id, 'Засчитано! Надо бы усложнить вопросы.')
             bot.send_message(config.BOT_CONFIG['ADMIN_ID'], f'{ message.chat.username } ответил.')
         else:  # wrong answer
-            bot.send_message(message.chat.id, f'Нет. Разница: { difference }')
+            diff_text = ''
+            if difference < 5:
+                diff_text = f'Разница: { difference }'
+            bot.send_message(message.chat.id, f'Нет. ' + diff_text)
 
     elif message.chat.id in users.get_answered_persons_ids():
         bot.send_message(message.chat.id, 'Расслабься, засчитано. Выпей чаю.')
