@@ -90,14 +90,20 @@ def close_current_question(message):
         except Exception as e:
             logging.info(f'Oops. {uid}, {e}.')
 
+    send_new_question_notification(message)
+
+
+@bot.message_handler(commands=['send_new_question_notification'])
+def send_new_question_notification(message):
     button_names = ['Получить вопрос', 'Послать ответившим <3']
     callbacks = ['get_question', 'send_love_to_winners']
 
-    for uid in users.get_all_users_ids():
+    for user in users.get_all_users():
         try:
-            bot.send_message(id, "Новый вопрос подъехал.", reply_markup=create_keyboard(button_names, callbacks))
+            bot.send_message(user['uid'], "Новый вопрос подъехал.", reply_markup=create_keyboard(button_names, callbacks))
+            logging.info(f'Notification was sent to {user["uid"]}, {user["username"]}')
         except Exception as e:
-            logging.info(f'Oops. {uid}, {e}.')
+            logging.info(f'Oops. {user["uid"]}, {user["username"]}, {e}.')
 
 
 @bot.message_handler(commands=['check_archive'])
@@ -129,7 +135,7 @@ def delete_question(message):
 @check_access
 def notify_all(message):
     text = message.text.replace('/notify_members ', '')
-    user_list = users.get_all_users_ids()
+    user_list = users.get_all_users()
     for user in user_list:
         try:
             bot.send_message(user['uid'], text)

@@ -51,7 +51,7 @@ def move_to_answered(chat):
     logging.info(f'Successfully moved {chat.username}')
 
 
-def get_all_users_ids():
+def get_all_users():
     result = []
     for document in db.all_users.find():
         result.append({
