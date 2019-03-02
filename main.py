@@ -61,10 +61,10 @@ def reset_dbs(message):
 @bot.message_handler(commands=['print_all_questions'])
 @check_access
 def print_all_questions(message):
-    questions = qa.get_all_questions()
+    questions = qa.get_all_questikons()
     for question in questions:
-        comment = question[3]
-        bot.send_message(message.chat.id, f'{question[0]}. {question[1]} \n {question[2]} \n {comment}')
+        qid, question_text, answer, comment, tip = question
+        bot.send_message(message.chat.id, f'{qid}. {question_text} \n {answer} \n {comment} \n {tip}')
 
 
 @bot.message_handler(commands=['close_current_question'])
@@ -75,11 +75,13 @@ def close_current_question(message):
 
     if len(answered) == 0:
         answered = "¯\_(ツ)_/¯"
+
     current_question = qa.CurrentQuestion()
     answer = current_question.answer
     comment = current_question.comment or ''
 
-    question_user_list = users.get_answered_persons_ids() + users.get_answering_persons_ids() + [config.BOT_CONFIG['ADMIN_ID']]
+    question_user_list = users.get_answered_persons_ids() + users.get_answering_persons_ids() \
+                         + [config.BOT_CONFIG['ADMIN_ID']]
     qa.close_current_question()
     users.reset_dbs()
 
@@ -164,7 +166,22 @@ def change_question(message):
     text = text.replace(question_property, '').strip()
 
     qa.change_question_by_number(qid, question_property, text)
-    logging.info(f'{question_property} is changed to {text}')
+
+
+@bot.message_handler(commands=['send_help'])
+def send_clue(message):
+    tip = qa.CurrentQuestion().tip
+    if tip:
+        bot.send_message(message.chat.id, tip)
+    else:
+        bot.send_message(message.chat.id, 'No help.')
+    logging.info(f'{message.chat.id}, {message.chat.username} asked for help.')
+
+
+@bot.message_handler(commands=['send_humanitarian_help'])
+def greet_megaera(message):
+    bot.send_message(message.chat.id, 'Камазов нет, но вы держитесь. Мегера.')
+    logging.info('Greeted Megaera.')
 
 
 @bot.message_handler(func=lambda m: True)

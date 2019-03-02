@@ -57,7 +57,8 @@ class Question:
         question_data = {
             'question': self.question,
             'answer': self.answer,
-            'comment': self.comment
+            'comment': self.comment,
+            'tip': None
         }
         result = questions.insert_one(question_data)
         logging.info(f'One question post: { result.inserted_id }')
@@ -68,12 +69,6 @@ class CurrentQuestion:
     def __init__(self):
         questions = db.questions
         self.current_question = questions.find_one()
-
-    '''def get_question(self):
-        if self.current_question:
-            return self.current_question
-        else:
-            return None'''
 
     @property
     def question(self):
@@ -96,12 +91,16 @@ class CurrentQuestion:
         else:
             return None
 
+    @property
+    def tip(self):
+        return self.current_question['tip']
+
 
 def change_question_by_number(qid, question_property, text):
 
     questions = db.questions
 
-    if question_property in ['question', 'answer', 'comment']:  # защита от дурака типа меня
+    if question_property in ['question', 'answer', 'comment', 'tip']:  # защита от дурака типа меня
         result = questions.find_one_and_update({"_id": ObjectId(qid)},
                                                {'$set': {question_property: text}},
                                                return_document=ReturnDocument.AFTER)
@@ -114,7 +113,7 @@ def get_all_questions():
     all_items = list(db.questions.find())
     questions = []
     for item in all_items:
-        questions.append([item['_id'], item['question'], item['answer'], item['comment']])
+        questions.append([item['_id'], item['question'], item['answer'], item['comment'], item['tip']])
     return questions
 
 

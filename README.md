@@ -61,14 +61,12 @@ a right answer.
 
 ## TODO
 ###### A
-* строки в отдельный модуль
 * minimize main (?)
 * aborted connection handling 
 * statistics 
-* ru to ua translation  
 
 ###### B
-* tips
+* строки в отдельный модуль -> ru to ua translation 
 
 ###### C
 * pics
